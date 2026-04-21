@@ -1,0 +1,39 @@
+services:
+  fhir-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fhir-backend
+    environment:
+      - SERVER_PORT=3000
+      - FHIR_SERVER_URL=http://hapi-fhir:8080/fhir
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - hapi-fhir
+
+  his-a-frontend:
+    build:
+      context: ./his-a-frontend
+      dockerfile: Dockerfile
+    container_name: his-a-frontend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - fhir-backend
+    restart: unless-stopped
+
+
+  hapi-fhir:
+    image: hapiproject/hapi:latest
+    container_name: hapi-fhir
+    ports:
+      - "8090:8080"
+    restart: unless-stopped
+
+volumes:
+  hapi-data:
+

@@ -20,11 +20,29 @@ services:
     container_name: his-a-frontend
     environment:
       - VITE_API_BASE_URL=http://localhost:3000
+      - VITE_RXNAV_API_BASE_URL=https://rxnav.nlm.nih.gov/REST
+      - VITE_HOSPITAL_NAME=MedCare HIS A
     ports:
       - "5173:5173"
     depends_on:
       - fhir-backend
     restart: unless-stopped
+
+  his-b-frontend:
+    build:
+      context: ./his-a-frontend
+      dockerfile: Dockerfile
+    container_name: his-b-frontend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3000
+      - VITE_RXNAV_API_BASE_URL=https://rxnav.nlm.nih.gov/REST
+      - VITE_HOSPITAL_NAME=Hospital B
+    ports:
+      - "5174:5173"
+    depends_on:
+      - fhir-backend
+    restart: unless-stopped
+
 
 
   hapi-fhir:

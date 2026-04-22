@@ -21,6 +21,7 @@ import { cn } from '@/utilities'
 
 const items: Array<{ key: string; title: string; icon: LucideIcon }> = [
   { key: ROUTES.home.path, title: 'Patients', icon: Users },
+  { key: ROUTES.practitioners.path, title: 'Practitioners', icon: Stethoscope },
   { key: ROUTES.encounters.path, title: 'Encounters', icon: Stethoscope },
   { key: ROUTES.medications.path, title: 'Medications', icon: Pill },
 ]
@@ -39,7 +40,7 @@ export function PageSidebar() {
   )
 
   return (
-    <Sidebar collapsible="icon" className="h-full [&_[data-slot=sidebar-inner]]:h-full">
+    <Sidebar collapsible="icon" className="h-full **:data-[slot=sidebar-inner]:h-full">
       <SidebarHeader className="border-b border-theme-sidebar-border">
         <div className={cn('flex items-center gap-2', isSidebarExpanded && 'px-2 py-1.5')}>
           <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-theme-sidebar-accent">

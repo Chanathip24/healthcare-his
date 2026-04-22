@@ -1,7 +1,8 @@
-import { medications } from "@/data/in-memory-store";
+import { getMedicationCatalog } from "@/data/medication-catalog";
 import { Medication } from "@/models/entities";
 
 export function getMedications(searchQuery: string): Medication[] {
+  const medications: Medication[] = getMedicationCatalog();
   if (!searchQuery) return [...medications];
 
   return medications.filter((medication: Medication): boolean => {

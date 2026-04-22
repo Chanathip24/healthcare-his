@@ -6,6 +6,7 @@ import EncounterDetail from '@/page/EncounterDetail'
 import Encounters from '@/page/Encounters'
 import Home from '@/page/Home'
 import Medications from '@/page/Medications'
+import PatientAction from '@/page/PatientAction'
 
 const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
       {
         path: ROUTES.home.path,
         element: <Home />,
+      },
+      {
+        path: ROUTES.patientAction.path,
+        element: <PatientAction />,
       },
       {
         path: ROUTES.encounters.path,

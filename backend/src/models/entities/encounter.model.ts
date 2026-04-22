@@ -22,6 +22,12 @@ export interface AddEncounterMedicationInput {
   frequency: string;
 }
 
+export interface CreateEncounterInput {
+  date: string;
+  classDisplay: string;
+  status: EncounterStatus;
+}
+
 export interface EncounterDetail extends Encounter {
   periodStart: string;
   medications: EncounterMedication[];

@@ -286,6 +286,7 @@ function AddMedicationDialog({ medications, isSubmitting, onSubmit, open, onOpen
   }, [])
 
   useEffect((): void => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!open) reset()
   }, [open, reset])
 

@@ -4,6 +4,10 @@ export const ROUTES: IRoutes = {
   home: {
     path: '/',
   },
+  patientAction: {
+    path: '/patients/:patientId/action',
+    getUrl: (patientId: string) => `/patients/${patientId}/action`,
+  },
   encounters: {
     path: '/encounters',
   },

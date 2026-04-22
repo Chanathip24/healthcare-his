@@ -33,12 +33,7 @@ import {
 import { Section } from '@/components/layout'
 import { ROUTES } from '@/constant'
 import { addEncounterMedication, getEncounterDetail, listMedications } from '@/hooks'
-import type {
-  IAddEncounterMedicationPayload,
-  IEncounterDetail,
-  IEncounterStatus,
-  IMedication,
-} from '@/type'
+import type { IAddEncounterMedicationPayload, IEncounterDetail, IEncounterStatus, IMedication } from '@/type'
 import { cn, formatDate, getErrorMessage } from '@/utilities'
 
 const ENCOUNTER_STATUS_LABEL: Record<IEncounterStatus, string> = {
@@ -80,8 +75,13 @@ const EncounterDetail = () => {
   })
 
   const { isPending: isAddingMedication, mutate: addMedicationMutation } = useMutation({
-    mutationFn: ({ encounterId: targetEncounterId, payload }: { encounterId: string; payload: IAddEncounterMedicationPayload }) =>
-      addEncounterMedication(targetEncounterId, payload),
+    mutationFn: ({
+      encounterId: targetEncounterId,
+      payload,
+    }: {
+      encounterId: string
+      payload: IAddEncounterMedicationPayload
+    }) => addEncounterMedication(targetEncounterId, payload),
     onSuccess: () => {
       toast.success('Medication added to encounter.')
       setIsAddMedicationDialogOpen(false)

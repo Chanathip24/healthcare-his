@@ -97,8 +97,15 @@ const Home = () => {
           </p>
           <div className="relative mt-2">
             <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-theme-gray" />
-            <Input placeholder="Search by patient ID or name..." className="pl-9" value={query} onChange={handleSearch} />
-            {isFetching && <Loader2 className="absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin text-theme-gray" />}
+            <Input
+              placeholder="Search by patient ID or name..."
+              className="pl-9"
+              value={query}
+              onChange={handleSearch}
+            />
+            {isFetching && (
+              <Loader2 className="absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin text-theme-gray" />
+            )}
           </div>
         </CardHeader>
         <CardContent>

@@ -3,8 +3,8 @@ import { HisBaseClient } from '@/hooks/api/client'
 import type {
   IAddEncounterMedicationPayload,
   ICreatePatientPayload,
-  IEncounterDetail,
   IEncounter,
+  IEncounterDetail,
   IHisApiClientBaseResponse,
   IMedication,
   IPatient,
@@ -20,7 +20,9 @@ const buildSearchQuery: (query: string) => string = (query: string): string => {
   return `?${searchParams.toString()}`
 }
 
-export const listPatients: (query: string) => Promise<Array<IPatient>> = async (query: string): Promise<Array<IPatient>> => {
+export const listPatients: (query: string) => Promise<Array<IPatient>> = async (
+  query: string,
+): Promise<Array<IPatient>> => {
   const response = await hisBaseClient.axiosInstance.get<IHisApiClientBaseResponse<Array<IPatient>>>(
     `/api/v1/patients${buildSearchQuery(query)}`,
   )
@@ -31,7 +33,10 @@ export const listPatients: (query: string) => Promise<Array<IPatient>> = async (
 export const createPatient: (payload: ICreatePatientPayload) => Promise<IPatient> = async (
   payload: ICreatePatientPayload,
 ): Promise<IPatient> => {
-  const response = await hisBaseClient.axiosInstance.post<IHisApiClientBaseResponse<IPatient>>('/api/v1/patients', payload)
+  const response = await hisBaseClient.axiosInstance.post<IHisApiClientBaseResponse<IPatient>>(
+    '/api/v1/patients',
+    payload,
+  )
   if (!response.data.data) throw new Error('Failed to create patient.')
   return response.data.data
 }

@@ -4,10 +4,10 @@ run-all:
 	docker compose up --build -d
 
 run-backend:
-	docker compose up --build -d backend
+	docker compose up --build -d fhir-backend
 
 run-frontend:
-	docker compose up --build -d frontend
+	docker compose up --build -d his-a-frontend
 
 run-hapi:
 	docker compose up --build -d hapi-fhir

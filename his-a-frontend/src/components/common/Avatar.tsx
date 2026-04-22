@@ -1,4 +1,4 @@
-import { Avatar as AvatarPrimitive } from 'radix-ui'
+import * as AvatarPrimitive from '@radix-ui/react-avatar'
 import type { ComponentProps } from 'react'
 
 import { cn } from '@/utilities'

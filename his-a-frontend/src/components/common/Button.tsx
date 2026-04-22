@@ -1,4 +1,4 @@
-import { Slot } from 'radix-ui'
+import { Slot } from '@radix-ui/react-slot'
 import type { ComponentProps } from 'react'
 import type { VariantProps } from 'tailwind-variants'
 
@@ -48,7 +48,7 @@ function Button({
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {
-  const Comp = asChild ? Slot.Root : 'button'
+  const Comp = asChild ? Slot : 'button'
 
   return (
     <Comp

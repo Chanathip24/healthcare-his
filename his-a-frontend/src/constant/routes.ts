@@ -7,6 +7,10 @@ export const ROUTES: IRoutes = {
   encounters: {
     path: '/encounters',
   },
+  encounterDetail: {
+    path: '/encounters/:encounterId',
+    getUrl: (encounterId: string) => `/encounters/${encounterId}`,
+  },
   medications: {
     path: '/medications',
   },

@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider, ScrollRestoration } from 'react-ro
 
 import { Layout } from '@/components/layout'
 import { ROUTES } from '@/constant'
+import EncounterDetail from '@/page/EncounterDetail'
 import Encounters from '@/page/Encounters'
 import Home from '@/page/Home'
 import Medications from '@/page/Medications'
@@ -22,6 +23,10 @@ const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
       {
         path: ROUTES.encounters.path,
         element: <Encounters />,
+      },
+      {
+        path: ROUTES.encounterDetail.path,
+        element: <EncounterDetail />,
       },
       {
         path: ROUTES.medications.path,

@@ -1,5 +1,7 @@
-import { Search, SearchX } from 'lucide-react'
-import { type ChangeEvent, type ChangeEventHandler, useCallback, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Loader2, Search, SearchX, TriangleAlert } from 'lucide-react'
+import { type ChangeEvent, type ChangeEventHandler, useCallback, useMemo, useState } from 'react'
+import { type NavigateFunction, useNavigate } from 'react-router-dom'
 
 import {
   Badge,
@@ -8,18 +10,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Table,
   TableBody,
   TableCell,
@@ -28,19 +19,32 @@ import {
   TableRow,
 } from '@/components/common'
 import { Section } from '@/components/layout'
+import { ROUTES } from '@/constant'
+import { listEncounters } from '@/hooks'
+import type { IEncounter } from '@/type'
+import { formatDate, getErrorMessage } from '@/utilities'
 
-const encounters = [
-  { id: '1', date: '2026-01-01', patient: 'John Doe', class: 'Ambulatory (AMB)', status: 'Active' },
-  { id: '2', date: '2026-01-02', patient: 'Jane Doe', class: 'Ambulatory (AMB)', status: 'Active' },
-  { id: '3', date: '2026-01-03', patient: 'Jim Doe', class: 'Ambulatory (AMB)', status: 'Active' },
-]
 const Encounters = () => {
+  const navigate: NavigateFunction = useNavigate()
   const [query, setQuery] = useState('')
-  const [open, setOpen] = useState(false)
+  const normalizedQuery = useMemo((): string => query.trim(), [query])
 
   const handleSearch: ChangeEventHandler<HTMLInputElement> = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value)
   }, [])
+
+  const {
+    data: encounters = [],
+    error,
+    isError,
+    isFetching,
+    isPending,
+    refetch,
+  } = useQuery<Array<IEncounter>>({
+    queryKey: ['encounters', normalizedQuery],
+    queryFn: () => listEncounters(normalizedQuery),
+    staleTime: 30_000,
+  })
   return (
     <Section>
       <header className="flex items-center justify-between">
@@ -58,19 +62,33 @@ const Encounters = () => {
           </p>
           <div className="relative mt-2">
             <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-theme-gray" />
-            <Input placeholder="Search by encounter ID " className="pl-9" onChange={handleSearch} />
+            <Input placeholder="Search by encounter ID or patient name..." className="pl-9" value={query} onChange={handleSearch} />
+            {isFetching && <Loader2 className="absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin text-theme-gray" />}
           </div>
         </CardHeader>
         <CardContent>
-          {!query ? (
+          {isPending ? (
+            <div className="flex flex-col items-center justify-center gap-2 py-12 text-center text-theme-gray">
+              <Loader2 className="size-10 animate-spin opacity-40" />
+              <p className="text-body-2">Loading encounters...</p>
+            </div>
+          ) : isError ? (
+            <div className="flex flex-col items-center justify-center gap-3 py-12 text-center text-theme-gray">
+              <TriangleAlert className="size-10 text-destructive opacity-80" />
+              <p className="text-body-2">{getErrorMessage(error, 'Failed to load encounters.')}</p>
+              <Button size="sm" variant="outline" onClick={() => refetch()}>
+                Retry
+              </Button>
+            </div>
+          ) : encounters.length === 0 && !normalizedQuery ? (
             <div className="flex flex-col items-center justify-center gap-2 py-12 text-center text-theme-gray">
               <Search className="size-10 opacity-40" />
-              <p className="text-body-2">Enter a patient ID or name to search</p>
+              <p className="text-body-2">No encounters available yet.</p>
             </div>
           ) : encounters.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 py-12 text-center text-theme-gray">
               <SearchX className="size-10 opacity-40" />
-              <p className="text-body-2">No patients match "{query}"</p>
+              <p className="text-body-2">No encounters match "{normalizedQuery}"</p>
             </div>
           ) : (
             <Table>
@@ -84,23 +102,38 @@ const Encounters = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {encounters.map((e) => (
-                  <TableRow key={e.id}>
-                    <TableCell className="font-mono text-body-3">{e.id}</TableCell>
-                    <TableCell className="font-medium">{e.patient}</TableCell>
+                {encounters.map((encounter) => (
+                  <TableRow key={encounter.id}>
+                    <TableCell>{formatDate(encounter.date, 'DD/MM/YYYY')}</TableCell>
+                    <TableCell className="font-medium">{encounter.patientName}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="capitalize">
-                        {e.class}
+                        {encounter.classDisplay}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="success" className="capitalize">
-                        {e.status}
+                      <Badge
+                        variant={
+                          encounter.status === 'active'
+                            ? 'success'
+                            : encounter.status === 'cancelled'
+                              ? 'destructive'
+                              : 'secondary'
+                        }
+                        className="capitalize"
+                      >
+                        {encounter.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button size="sm" variant="outline">
-                        Select
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(): void => {
+                          void navigate(ROUTES.encounterDetail.getUrl(encounter.id))
+                        }}
+                      >
+                        Action
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -110,70 +143,7 @@ const Encounters = () => {
           )}
         </CardContent>
       </Card>
-
-      <CreatePatientDialog open={open} onOpenChange={setOpen} />
     </Section>
-  )
-}
-function CreatePatientDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const [name, setName] = useState('')
-  const [gender, setGender] = useState('male')
-  const [age, setAge] = useState('')
-  const [error, setError] = useState<string | null>(null)
-
-  const reset = () => {
-    setName('')
-    setGender('male')
-    setAge('')
-    setError(null)
-  }
-
-  return (
-    <Dialog
-      open={open}
-      onOpenChange={(v) => {
-        if (!v) reset()
-        onOpenChange(v)
-      }}
-    >
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>New Patient</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label>Gender</Label>
-              <Select value={gender} onValueChange={(v) => setGender(v)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Age</Label>
-              <Input type="number" min={1} value={age} onChange={(e) => setAge(e.target.value)} placeholder="0" />
-            </div>
-          </div>
-          {error && <p className="text-body-2 text-destructive">{error}</p>}
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button>Save</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   )
 }
 

@@ -1,5 +1,5 @@
+import { Slot } from '@radix-ui/react-slot'
 import { ChevronRight, MoreHorizontal } from 'lucide-react'
-import { Slot } from 'radix-ui'
 import type { ComponentProps } from 'react'
 
 import { cn } from '@/utilities'
@@ -32,7 +32,7 @@ function BreadcrumbLink({
 }: ComponentProps<'a'> & {
   asChild?: boolean
 }) {
-  const Comp = asChild ? Slot.Root : 'a'
+  const Comp = asChild ? Slot : 'a'
 
   return (
     <Comp data-slot="breadcrumb-link" className={cn('transition-colors hover:text-primary', className)} {...props} />

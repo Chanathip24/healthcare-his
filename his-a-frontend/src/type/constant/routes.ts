@@ -1,6 +1,7 @@
 export type IRoutes = {
   home: Omit<IRoute, 'getUrl'>
   encounters: Omit<IRoute, 'getUrl'>
+  encounterDetail: IRoute
   medications: Omit<IRoute, 'getUrl'>
 }
 export type IRoute = {

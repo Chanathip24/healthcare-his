@@ -1,4 +1,4 @@
-import { Slot } from 'radix-ui'
+import { Slot } from '@radix-ui/react-slot'
 import { type ComponentProps, createContext, useContext, useId } from 'react'
 import {
   Controller,
@@ -90,11 +90,11 @@ function FormLabel({ className, ...props }: ComponentProps<typeof Label>) {
   )
 }
 
-function FormControl({ ...props }: ComponentProps<typeof Slot.Root>) {
+function FormControl({ ...props }: ComponentProps<typeof Slot>) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
   return (
-    <Slot.Root
+    <Slot
       data-slot="form-control"
       id={formItemId}
       aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}

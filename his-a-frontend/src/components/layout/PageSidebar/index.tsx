@@ -31,6 +31,15 @@ export function PageSidebar() {
   const currentPath: string = useLocation().pathname
 
   const isSidebarExpanded: boolean = useMemo(() => sidebarState === SidebarState.EXPANDED, [sidebarState])
+  const isActiveRoute = useCallback(
+    (targetPath: string): boolean => {
+      if (targetPath === ROUTES.home.path) {
+        return currentPath === targetPath
+      }
+      return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`)
+    },
+    [currentPath],
+  )
   const handleNavigate = useCallback(
     (key: string): void => {
       navigate(key)
@@ -61,7 +70,7 @@ export function PageSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.key}>
                   <SidebarMenuButton
-                    isActive={currentPath === item.key}
+                    isActive={isActiveRoute(item.key)}
                     onClick={(): void => handleNavigate(item.key)}
                     tooltip={item.title}
                   >

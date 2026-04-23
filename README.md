@@ -14,6 +14,47 @@ Both frontends call the same backend API, and the backend directly calls a FHIR 
 
 The backend uses `FHIR_SERVER_URL` (set in Docker Compose) to connect to FHIR.
 
+## Features
+
+This system currently includes the following frontend capabilities:
+
+- **Patient management**
+  - List patients
+  - View patient detail by ID
+  - Create new patient
+
+- **Practitioner management**
+  - List practitioners
+  - View practitioner detail by ID
+  - Create new practitioner
+
+- **Encounter management**
+  - List encounters
+  - View encounter detail by ID
+  - View encounters for a specific patient
+  - Create patient encounter
+
+- **Medication management**
+  - View medications for a specific patient
+  - Create patient medication record
+
+- **Drug search assistance (RxNorm)**
+  - Search medication names from RxNorm so users do not need to search by medication code.
+  - Debounced search, in-flight request cancellation, deduplication, and cleaned drug labels
+
+## Data creation flow
+
+To keep records connected correctly, create data in this sequence:
+
+- **Step 1:** Create a **Patient**
+- **Step 2:** Create an **Encounter** for that patient
+- **Step 3:** Create a **Practitioner** (required for medication prescribing)
+- **Step 4:** Create a **Medication Request** linked to the patient + encounter + practitioner
+
+Quick overview: `Patient -> Encounter -> Medication Request`  
+Supporting requirement: `Practitioner` must exist before `Medication Request`.
+
+
 ## Run with Docker Compose
 
 From project root:
